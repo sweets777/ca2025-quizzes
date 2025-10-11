@@ -35,7 +35,7 @@ int* countBits(int n, int* returnSize) {
     return ans;
 }
 
-// test //
+// --- 以下是測試用的 main 函式 ---
 void print_array(const char* title, int* arr, int size) {
     printf("%s [", title);
     for (int i = 0; i < size; i++) {
