@@ -1,0 +1,102 @@
+00000000 <main>:
+    0:         10000417        auipc x8 0x10000
+    4:         00040413        addi x8 x8 0
+    8:         10000497        auipc x9 0x10000
+    c:         02b48493        addi x9 x9 43
+    10:        0004a483        lw x9 0 x9
+    14:        00100913        addi x18 x0 1
+
+00000018 <loop_cases>:
+    18:        12048263        beq x9 x0 292 <end_program>
+    1c:        00400893        addi x17 x0 4
+    20:        10000517        auipc x10 0x10000
+    24:        01750513        addi x10 x10 23
+    28:        00000073        ecall
+    2c:        00100893        addi x17 x0 1
+    30:        00090513        addi x10 x18 0
+    34:        00000073        ecall
+    38:        00400893        addi x17 x0 4
+    3c:        10000517        auipc x10 0x10000
+    40:        00150513        addi x10 x10 1
+    44:        00000073        ecall
+    48:        00400893        addi x17 x0 4
+    4c:        00040513        addi x10 x8 0
+    50:        00000073        ecall
+    54:        00400893        addi x17 x0 4
+    58:        10000517        auipc x10 0x10000
+    5c:        fe850513        addi x10 x10 -24
+    60:        00000073        ecall
+    64:        00040593        addi x11 x8 0
+    68:        000002b3        add x5 x0 x0
+    6c:        00000333        add x6 x0 x0
+    70:        01000393        addi x7 x0 16
+
+00000074 <parse_loop>:
+    74:        02730263        beq x6 x7 36 <parse_done>
+    78:        00058e03        lb x28 0 x11
+    7c:        00129293        slli x5 x5 1
+    80:        00158593        addi x11 x11 1
+    84:        00130313        addi x6 x6 1
+    88:        03100e93        addi x29 x0 49
+    8c:        ffde14e3        bne x28 x29 -24 <parse_loop>
+    90:        0012e293        ori x5 x5 1
+    94:        fe1ff06f        jal x0 -32 <parse_loop>
+
+00000098 <parse_done>:
+    98:        00f2d313        srli x6 x5 15
+    9c:        01f31313        slli x6 x6 31
+    a0:        01129393        slli x7 x5 17
+    a4:        0183d393        srli x7 x7 24
+    a8:        01929e13        slli x28 x5 25
+    ac:        019e5e13        srli x28 x28 25
+    b0:        0ff00e93        addi x29 x0 255
+    b4:        01d38e63        beq x7 x29 28 <check_inf_nan>
+    b8:        04038063        beq x7 x0 64 <check_subnormal>
+    bc:        01739393        slli x7 x7 23
+    c0:        010e1e13        slli x28 x28 16
+    c4:        00736533        or x10 x6 x7
+    c8:        01c56533        or x10 x10 x28
+    cc:        0440006f        jal x0 68 <print_float>
+
+000000d0 <check_inf_nan>:
+    d0:        000e1a63        bne x28 x0 20 <print_nan>
+    d4:        0ff00393        addi x7 x0 255
+    d8:        01739393        slli x7 x7 23
+    dc:        00736533        or x10 x6 x7
+    e0:        0300006f        jal x0 48 <print_float>
+
+000000e4 <print_nan>:
+    e4:        00400893        addi x17 x0 4
+    e8:        10000517        auipc x10 0x10000
+    ec:        f5f50513        addi x10 x10 -161
+    f0:        00000073        ecall
+    f4:        0280006f        jal x0 40 <next_case>
+
+000000f8 <check_subnormal>:
+    f8:         000e0863        beq x28 x0 16 <handle_zero>
+    fc:         010e1e13        slli x28 x28 16
+    100:        01c36533        or x10 x6 x28
+    104:        00c0006f        jal x0 12 <print_float>
+
+00000108 <handle_zero>:
+    108:        00030513        addi x10 x6 0
+    10c:        0040006f        jal x0 4 <print_float>
+
+00000110 <print_float>:
+    110:        00200893        addi x17 x0 2
+    114:        00000073        ecall
+    118:        0040006f        jal x0 4 <next_case>
+
+0000011c <next_case>:
+    11c:        00400893        addi x17 x0 4
+    120:        10000517        auipc x10 0x10000
+    124:        f2550513        addi x10 x10 -219
+    128:        00000073        ecall
+    12c:        01140413        addi x8 x8 17
+    130:        00190913        addi x18 x18 1
+    134:        fff48493        addi x9 x9 -1
+    138:        ee1ff06f        jal x0 -288 <loop_cases>
+
+0000013c <end_program>:
+    13c:        00a00893        addi x17 x0 10
+    140:        00000073        ecall
