@@ -12,86 +12,87 @@ str_comma_space: .string ", "
 
 main:
     addi sp, sp, -48
-    sw ra, 44(sp)     
-# Test 1 : n = 5 
-    li a0, 5         
-    addi a1, sp, 20   
+    sw ra, 44(sp)   
+      
+    addi a0, zero, 5
+    addi a1, sp, 20
     jal countBits_fill
-    mv s0, a0         
-    la a0, title1     
-    addi a1, sp, 20   
-    mv a2, s0         
+    addi s0, a0, 0
+    lui a0, %hi(title1)
+    addi a0, a0, %lo(title1)
+    addi a1, sp, 20
+    addi a2, s0, 0
     jal print_array
 
-# Test 2 : n = 8 
-    li a0, 8          
-    mv a1, sp         
+    addi a0, zero, 8
+    addi a1, sp, 0
     jal countBits_fill
-    mv s0, a0         
-    la a0, title2     
-    mv a1, sp         
-    mv a2, s0        
+    addi s0, a0, 0
+    lui a0, %hi(title2)
+    addi a0, a0, %lo(title2)
+    addi a1, sp, 0
+    addi a2, s0, 0
     jal print_array
 
-# Test 3 : n = 0 
-    li a0, 0          
-    mv a1, sp         
+    addi a0, zero, 0
+    addi a1, sp, 0
     jal countBits_fill
-    mv s0, a0         
-    la a0, title3     
-    mv a1, sp        
-    mv a2, s0         
+    addi s0, a0, 0
+    lui a0, %hi(title3)
+    addi a0, a0, %lo(title3)
+    addi a1, sp, 0
+    addi a2, s0, 0
     jal print_array
 
     lw ra, 44(sp)     
     addi sp, sp, 48   
-    li a7, 10         
+    addi a7, zero, 10
     ecall
 
 count_leading_zeros:
-    bnez a0, .L_clz_start 
-    li a0, 32             
-    ret                   
+    bne a0, zero, .L_clz_start
+    addi a0, zero, 32
+    jalr zero, ra, 0
 
 .L_clz_start:
-    li t0, 0        
-    mv t1, a0         
-    lui t2, 0xFFFF0   
+    addi t0, zero, 0
+    addi t1, a0, 0
+    lui t2, 0xFFFF0
     and t3, t1, t2
-    bnez t3, .L_clz_check8
+    bne t3, zero, .L_clz_check8
     addi t0, t0, 16   
     slli t1, t1, 16   
 
 .L_clz_check8:
     lui t2, 0xFF000   
     and t3, t1, t2
-    bnez t3, .L_clz_check4
-    addi t0, t0, 8   
+    bne t3, zero, .L_clz_check4
+    addi t0, t0, 8    
     slli t1, t1, 8    
 
 .L_clz_check4:
     lui t2, 0xF0000   
     and t3, t1, t2
-    bnez t3, .L_clz_check2
-    addi t0, t0, 4   
+    bne t3, zero, .L_clz_check2
+    addi t0, t0, 4    
     slli t1, t1, 4    
 
 .L_clz_check2:
     lui t2, 0xC0000   
     and t3, t1, t2
-    bnez t3, .L_clz_check1
-    addi t0, t0, 2    
-    slli t1, t1, 2    
+    bne t3, zero, .L_clz_check1
+    addi t0, t0, 2      
+    slli t1, t1, 2      
 
 .L_clz_check1:
     lui t2, 0x80000   
     and t3, t1, t2
-    bnez t3, .L_clz_done
-    addi t0, t0, 1    
+    bne t3, zero, .L_clz_done
+    addi t0, t0, 1      
 
 .L_clz_done:
-    mv a0, t0         
-    ret
+    addi a0, t0, 0
+    jalr zero, ra, 0
 
 countBits_fill:
     addi sp, sp, -20
@@ -100,18 +101,18 @@ countBits_fill:
     sw s1, 8(sp)   
     sw s2, 4(sp)    
     sw s3, 0(sp)    
-    mv s0, a0       
-    mv s1, a1      
+    addi s0, a0, 0
+    addi s1, a1, 0
     sw zero, 0(s1)  
-    li s2, 1        
+    addi s2, zero, 1
 
 .L_for_loop_start:
-    bgt s2, s0, .L_for_loop_end 
-    mv a0, s2      
+    blt s0, s2, .L_for_loop_end
+    addi a0, s2, 0
     jal ra, count_leading_zeros
-    li t0, 31
+    addi t0, zero, 31
     sub t1, t0, a0  
-    li t2, 1
+    addi t2, zero, 1
     sll s3, t2, t1 
     sub t0, s2, s3  
     slli t1, t0, 2  
@@ -123,7 +124,7 @@ countBits_fill:
     add t2, s1, t1  
     sw t3, 0(t2)    
     addi s2, s2, 1
-    j .L_for_loop_start
+    jal zero, .L_for_loop_start
 
 .L_for_loop_end:
     addi a0, s0, 1
@@ -133,7 +134,7 @@ countBits_fill:
     lw s0, 12(sp)
     lw ra, 16(sp)
     addi sp, sp, 20
-    ret
+    jalr zero, ra, 0
 
 print_array:
     addi sp, sp, -16
@@ -141,41 +142,44 @@ print_array:
     sw s0, 8(sp)    
     sw s1, 4(sp)    
     sw s2, 0(sp)    
-    mv s0, a0
-    mv s1, a1
-    mv s2, a2
-    mv a0, s0
-    li a7, 4      
+    addi s0, a0, 0
+    addi s1, a1, 0
+    addi s2, a2, 0
+    addi a0, s0, 0
+    addi a7, zero, 4
     ecall
-    la a0, str_open_bracket
-    li a7, 4
+    lui a0, %hi(str_open_bracket)
+    addi a0, a0, %lo(str_open_bracket)
+    addi a7, zero, 4
     ecall
-    li t0, 0        # i = 0
+    addi t0, zero, 0
 
 .L_print_loop:
     bge t0, s2, .L_print_loop_end 
     slli t1, t0, 2  
     add t2, s1, t1  
     lw a0, 0(t2)    
-    li a7, 1       
+    addi a7, zero, 1
     ecall
-    addi t3, s2, -1 # t3 = size - 1
+    addi t3, s2, -1 
     bge t0, t3, .L_skip_comma 
-    la a0, str_comma_space
-    li a7, 4
+    lui a0, %hi(str_comma_space)
+    addi a0, a0, %lo(str_comma_space)
+    addi a7, zero, 4
     ecall
 
 .L_skip_comma:
     addi t0, t0, 1
-    j .L_print_loop
+    jal zero, .L_print_loop
 
 .L_print_loop_end:
-    la a0, str_close_bracket_newline
-    li a7, 4
+    lui a0, %hi(str_close_bracket_newline)
+    addi a0, a0, %lo(str_close_bracket_newline)
+    addi a7, zero, 4
     ecall
     lw s2, 0(sp)
     lw s1, 4(sp)
     lw s0, 8(sp)
     lw ra, 12(sp)
     addi sp, sp, 16
-    ret
+    jalr zero, ra, 0
