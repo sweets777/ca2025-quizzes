@@ -7,6 +7,7 @@ test_cases:
 case_count:
     .word 3
 
+# String literals for output
 str_case:   .string "Case "
 str_colon:  .string ": "
 str_arrow:  .string " -> "
@@ -17,49 +18,44 @@ str_nan:    .string "NaN"
 .globl main
 
 main:
-    lui s0, %hi(test_cases)
-    addi s0, s0, %lo(test_cases)
-    lui s1, %hi(case_count)
-    addi s1, s1, %lo(case_count)
-    lw s1, 0(s1)
+    la   s0, test_cases
+    la   s1, case_count
+    lw   s1, 0(s1)
     addi s2, x0, 1
 
 loop_cases:
-    beq s1, zero, end_program
+    beq  s1, zero, end_program
     addi a7, x0, 4
-    lui a0, %hi(str_case)
-    addi a0, a0, %lo(str_case)
+    la   a0, str_case
     ecall
     addi a7, x0, 1
     addi a0, s2, 0
     ecall
     addi a7, x0, 4
-    lui a0, %hi(str_colon)
-    addi a0, a0, %lo(str_colon)
+    la   a0, str_colon
     ecall
     addi a7, x0, 4
     addi a0, s0, 0
     ecall
     addi a7, x0, 4
-    lui a0, %hi(str_arrow)
-    addi a0, a0, %lo(str_arrow)
+    la   a0, str_arrow
     ecall
 
     addi a1, s0, 0
-    add t0, x0, x0
-    add t1, x0, x0
+    add  t0, x0, x0
+    add  t1, x0, x0
     addi t2, x0, 16
 
 parse_loop:
-    beq t1, t2, parse_done
-    lb t3, 0(a1)
+    beq  t1, t2, parse_done
+    lb   t3, 0(a1)
     slli t0, t0, 1
     addi a1, a1, 1
     addi t1, t1, 1
     addi t4, x0, 49
-    bne t3, t4, parse_loop
-    ori t0, t0, 1
-    jal zero, parse_loop
+    bne  t3, t4, parse_loop
+    ori  t0, t0, 1
+    j    parse_loop
 
 parse_done:
     srli t1, t0, 15
@@ -70,53 +66,51 @@ parse_done:
     srli t3, t3, 25
     
     addi t4, x0, 255
-    beq t2, t4, check_inf_nan
-    beq t2, zero, check_subnormal
+    beq  t2, t4, check_inf_nan
+    beq  t2, zero, check_subnormal
 
     slli t2, t2, 23
     slli t3, t3, 16
-    or a0, t1, t2
-    or a0, a0, t3
-    jal zero, print_float
+    or   a0, t1, t2
+    or   a0, a0, t3
+    j    print_float
 
 check_inf_nan:
-    bne t3, zero, print_nan
+    bne  t3, zero, print_nan
     addi t2, x0, 255
     slli t2, t2, 23
-    or a0, t1, t2
-    jal zero, print_float
+    or   a0, t1, t2
+    j    print_float
 
 print_nan:
     addi a7, x0, 4
-    lui a0, %hi(str_nan)
-    addi a0, a0, %lo(str_nan)
+    la   a0, str_nan
     ecall
-    jal zero, next_case
+    j    next_case
 
 check_subnormal:
-    beq t3, zero, handle_zero
+    beq  t3, zero, handle_zero
     slli t3, t3, 16
     or a0, t1, t3
-    jal zero, print_float
+    j print_float
 
 handle_zero:
     addi a0, t1, 0
-    jal zero, print_float
+    j print_float
 
 print_float:
     addi a7, x0, 2
     ecall
-    jal zero, next_case
+    j    next_case
 
 next_case:
     addi a7, x0, 4
-    lui a0, %hi(str_newline)
-    addi a0, a0, %lo(str_newline)
+    la   a0, str_newline
     ecall
     addi s0, s0, 17
     addi s2, s2, 1
     addi s1, s1, -1
-    jal zero, loop_cases
+    j    loop_cases
 
 end_program:
     addi a7, x0, 10
