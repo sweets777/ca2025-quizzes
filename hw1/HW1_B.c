@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-/* 正確的 32-bit clz（不依賴內建函式） */
 static inline int count_leading_zeros(uint32_t x) {
     if (x == 0) return 32;
     int n = 0;
@@ -13,12 +12,11 @@ static inline int count_leading_zeros(uint32_t x) {
     return n;
 }
 
-/* 由呼叫端提供緩衝區，不做動態配置 */
 int countBits_fill(int n, int *ans) {
     ans[0] = 0;
     for (int i = 1; i <= n; ++i) {
         int lz  = count_leading_zeros((uint32_t)i);
-        int hp2 = 1 << (31 - lz);      // 最高位的 2^k
+        int hp2 = 1 << (31 - lz);      
         ans[i]  = ans[i - hp2] + 1;
     }
     return n + 1;
